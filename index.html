@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal do Colaborador — Contracheque</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e2d45;
+    --accent: #00c9a7;
+    --accent2: #0070f3;
+    --text: #e8edf5;
+    --muted: #6b7a99;
+    --danger: #ff4d6d;
+    --success: #00c9a7;
+    --card-shadow: 0 8px 32px rgba(0,0,0,0.45);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  /* Background pattern */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 0%, rgba(0,201,167,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(0,112,243,0.07) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .grid-bg {
+    position: fixed; inset: 0; z-index: 0; opacity: 0.03;
+    background-image: linear-gradient(var(--accent) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  /* Header */
+  header {
+    position: relative; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 40px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,14,26,0.8);
+    backdrop-filter: blur(12px);
+  }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 1rem; font-weight: 600; letter-spacing: 0.02em;
+  }
+  .logo-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.3); }
+  }
+  .header-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem; color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 4px 10px; border-radius: 20px;
+  }
+  .admin-link {
+    font-size: 0.8rem; color: var(--muted); text-decoration: none;
+    border: 1px solid var(--border); padding: 6px 14px; border-radius: 6px;
+    transition: all 0.2s;
+  }
+  .admin-link:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* Main */
+  main {
+    position: relative; z-index: 1;
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 40px 20px;
+  }
+
+  /* Login Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 48px 44px;
+    width: 100%; max-width: 440px;
+    box-shadow: var(--card-shadow);
+    animation: slideUp 0.5s cubic-bezier(0.16,1,0.3,1);
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-icon {
+    width: 56px; height: 56px; border-radius: 14px;
+    background: linear-gradient(135deg, rgba(0,201,167,0.15), rgba(0,112,243,0.15));
+    border: 1px solid rgba(0,201,167,0.25);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 28px; font-size: 24px;
+  }
+  .card-title {
+    font-size: 1.6rem; font-weight: 700; margin-bottom: 6px;
+    line-height: 1.2;
+  }
+  .card-subtitle {
+    color: var(--muted); font-size: 0.88rem; margin-bottom: 36px;
+    line-height: 1.5;
+  }
+
+  .form-group { margin-bottom: 20px; }
+  label {
+    display: block; font-size: 0.8rem; font-weight: 500;
+    color: var(--muted); margin-bottom: 8px; letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 16px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    outline: none;
+  }
+  input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,201,167,0.12);
+  }
+  input::placeholder { color: var(--muted); opacity: 0.6; }
+
+  .btn {
+    width: 100%; padding: 14px;
+    background: linear-gradient(135deg, var(--accent), #00a08a);
+    color: #0a0e1a; font-family: 'Sora', sans-serif;
+    font-size: 0.92rem; font-weight: 600;
+    border: none; border-radius: 10px; cursor: pointer;
+    transition: all 0.25s; letter-spacing: 0.02em;
+    margin-top: 8px;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,201,167,0.3); }
+  .btn:active { transform: translateY(0); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .error-msg {
+    background: rgba(255,77,109,0.1); border: 1px solid rgba(255,77,109,0.3);
+    color: var(--danger); border-radius: 8px; padding: 12px 16px;
+    font-size: 0.83rem; margin-top: 16px; display: none;
+  }
+  .error-msg.show { display: block; animation: shake 0.3s ease; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  /* Portal - após login */
+  .portal { display: none; }
+  .portal.active { display: block; animation: slideUp 0.4s ease; }
+
+  .welcome-bar {
+    background: linear-gradient(135deg, rgba(0,201,167,0.08), rgba(0,112,243,0.08));
+    border: 1px solid rgba(0,201,167,0.2);
+    border-radius: 12px; padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .welcome-name { font-weight: 600; font-size: 0.95rem; }
+  .welcome-id { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--muted); }
+  .logout-btn {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.78rem;
+    font-family: 'Sora', sans-serif; transition: all 0.2s;
+  }
+  .logout-btn:hover { color: var(--danger); border-color: var(--danger); }
+
+  .section-label {
+    font-size: 0.75rem; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;
+  }
+
+  .payslip-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .payslip-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: all 0.2s; cursor: pointer;
+  }
+  .payslip-item:hover {
+    border-color: var(--accent);
+    background: rgba(0,201,167,0.05);
+    transform: translateX(4px);
+  }
+  .payslip-info { display: flex; align-items: center; gap: 14px; }
+  .payslip-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: rgba(0,201,167,0.1); border: 1px solid rgba(0,201,167,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .payslip-month { font-weight: 600; font-size: 0.95rem; }
+  .payslip-size { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+  .download-btn {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.8rem;
+    font-family: 'Sora', sans-serif; transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .download-btn:hover {
+    background: var(--accent); color: #0a0e1a; border-color: var(--accent);
+    font-weight: 600;
+  }
+
+  .empty-state {
+    text-align: center; padding: 40px 20px;
+    color: var(--muted); font-size: 0.88rem;
+  }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.4; }
+
+  /* Footer */
+  footer {
+    position: relative; z-index: 1;
+    text-align: center; padding: 20px;
+    color: var(--muted); font-size: 0.75rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(0,201,167,0.08); border: 1px solid rgba(0,201,167,0.2);
+    color: var(--accent); padding: 3px 10px; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 500; margin-bottom: 20px;
+  }
+  .badge::before { content: '●'; font-size: 0.55rem; }
+
+  @media (max-width: 480px) {
+    header { padding: 16px 20px; }
+    .card { padding: 32px 24px; }
+    .header-tag { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    Portal Operacional
+  </div>
+  <span class="header-tag">v1.0</span>
+  <a href="admin.html" class="admin-link">⚙ Admin</a>
+</header>
+
+<main>
+  <!-- LOGIN -->
+  <div class="card" id="loginCard">
+    <div class="card-icon">📄</div>
+    <div class="badge">Acesso Seguro</div>
+    <h1 class="card-title">Seus<br>Contracheques</h1>
+    <p class="card-subtitle">Entre com sua matrícula e nome completo para acessar seus documentos.</p>
+
+    <div class="form-group">
+      <label>Matrícula</label>
+      <input type="text" id="inputId" placeholder="ex: 00123" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label>Nome Completo</label>
+      <input type="text" id="inputPass" placeholder="Seu nome completo" autocomplete="name">
+    </div>
+    <button class="btn" id="btnLogin" onclick="doLogin()">Entrar</button>
+    <div class="error-msg" id="errorMsg">Matrícula ou nome incorretos. Tente novamente.</div>
+  </div>
+
+  <!-- PORTAL -->
+  <div class="card portal" id="portalCard">
+    <div class="welcome-bar">
+      <div>
+        <div class="welcome-name" id="welcomeName">—</div>
+        <div class="welcome-id" id="welcomeId">—</div>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">Sair</button>
+    </div>
+
+    <div class="section-label">Contracheques Disponíveis</div>
+    <div class="payslip-list" id="payslipList">
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        Nenhum contracheque disponível no momento.
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>Portal de Contracheques &nbsp;·&nbsp; Acesso restrito a colaboradores</footer>
+
+<script>
+// =============================================
+// DADOS — editados pelo admin via admin.html
+// =============================================
+function getData() {
+  try {
+    return JSON.parse(localStorage.getItem('rh_data') || 'null') || getDefaultData();
+  } catch { return getDefaultData(); }
+}
+
+function getDefaultData() {
+  return {
+    colaboradores: [
+      // Exemplo: { id: "00001", nome: "João Silva", senha: "senha123", contracheques: [] }
+      // Gerado pelo painel admin
+    ]
+  };
+}
+
+// Login
+function doLogin() {
+  const id = document.getElementById('inputId').value.trim();
+  const nomeInput = document.getElementById('inputPass').value.trim().toLowerCase();
+  const data = getData();
+  const colab = data.colaboradores.find(c =>
+    c.id === id && c.nome.trim().toLowerCase() === nomeInput
+  );
+
+  if (!colab) {
+    const err = document.getElementById('errorMsg');
+    err.classList.add('show');
+    setTimeout(() => err.classList.remove('show'), 3000);
+    return;
+  }
+
+  sessionStorage.setItem('rh_user', JSON.stringify(colab));
+  showPortal(colab);
+}
+
+document.getElementById('inputPass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+function showPortal(colab) {
+  document.getElementById('loginCard').style.display = 'none';
+  const portal = document.getElementById('portalCard');
+  portal.classList.add('active');
+  document.getElementById('welcomeName').textContent = colab.nome;
+  document.getElementById('welcomeId').textContent = `Cód. ${colab.id}`;
+
+  const list = document.getElementById('payslipList');
+  if (!colab.contracheques || colab.contracheques.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div>Nenhum contracheque disponível no momento.</div>`;
+    return;
+  }
+
+  const sorted = [...colab.contracheques].sort((a, b) => b.mes.localeCompare(a.mes));
+  list.innerHTML = sorted.map(cc => `
+    <div class="payslip-item" onclick="downloadPayslip('${cc.mes}', '${colab.id}')">
+      <div class="payslip-info">
+        <div class="payslip-icon">📋</div>
+        <div>
+          <div class="payslip-month">${formatMes(cc.mes)}</div>
+          <div class="payslip-size">Clique para baixar</div>
+        </div>
+      </div>
+      <button class="download-btn">⬇ Baixar PDF</button>
+    </div>
+  `).join('');
+}
+
+function formatMes(mes) {
+  const [ano, m] = mes.split('-');
+  const nomes = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  return `${nomes[parseInt(m)-1]} / ${ano}`;
+}
+
+function downloadPayslip(mes, colabId) {
+  const data = getData();
+  const colab = data.colaboradores.find(c => c.id === colabId);
+  if (!colab) return;
+  const cc = colab.contracheques.find(c => c.mes === mes);
+  if (!cc || !cc.pdf) return;
+
+  const link = document.createElement('a');
+  link.href = cc.pdf;
+  link.download = `contracheque_${colabId}_${mes}.pdf`;
+  link.click();
+}
+
+function doLogout() {
+  sessionStorage.removeItem('rh_user');
+  location.reload();
+}
+
+// Auto-login se sessão ativa
+const sess = sessionStorage.getItem('rh_user');
+if (sess) {
+  try { showPortal(JSON.parse(sess)); } catch {}
+}
+</script>
+</body>
+</html>
